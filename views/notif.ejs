@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../assets/styles.css" rel="stylesheet">
+    <title>Notification</title>
+</head>
+<body>
+    <%- include('./partials/nav.ejs') %>
+    <h1>Welcome to the notifications page</h1>
+    <div>
+        <button type="button" onclick="handleClick()">Click here to start notifications</button>
+        <button type="button" onclick="handleStop()">Click here to stop notifications</button>
+    </div>
+    <ul id="list"></ul>
+    <script>
+        var jokes = '<%-jokes%>'
+        var ping = new Audio("./assets/ping.mp3");
+            async function getJoke() {
+                const res = await fetch("https://icanhazdadjoke.com/", {
+                    headers: {
+                        Accept: "application/json"
+                    }
+                });
+                return res.json();
+            }
+
+            async function handleClick() {
+                timer = setInterval(fetchJokes, 10000);
+            }
+
+            async function fetchJokes() {
+                ping.load();
+                const joke = await getJoke();
+                jokes = [...jokes, joke];
+                var ul = document.getElementById("list");
+                var li = document.createElement("li");
+                li.appendChild(document.createTextNode(joke.joke));
+                ul.appendChild(li);
+                ul.scrollIntoView({ behavior: "smooth" });
+                console.log(joke.joke);
+                ping.play();
+            }
+            async function handleStop() {
+                clearInterval(timer);
+            }
+    </script>
+</body>
+</html>
